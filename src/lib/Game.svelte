@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { Color, GuessResult } from '../utils/logic';
-  import { COLOR_HEX, shuffleTarget, computeMatches } from '../utils/logic';
+  import { COLOR_HEX, COLOR_TO_NUM, shuffleTarget, computeMatches } from '../utils/logic';
   import Palette from './Palette.svelte';
   import History from './History.svelte';
   import Modal from './Modal.svelte';
@@ -167,7 +167,9 @@
       <p class="stat">{guesses.length} {guesses.length === 1 ? 'guess' : 'guesses'}</p>
       <div class="solution">
         {#each target as color}
-          <div class="solution-square" style="background: {COLOR_HEX[color]}"></div>
+          <div class="solution-square" style="background: {COLOR_HEX[color]}">
+            <span class="solution-num">{COLOR_TO_NUM[color]}</span>
+          </div>
         {/each}
       </div>
       <button class="result-btn won" on:click={initGame}>Play Again</button>
@@ -180,7 +182,9 @@
       <p class="label">The answer was</p>
       <div class="solution">
         {#each target as color}
-          <div class="solution-square" style="background: {COLOR_HEX[color]}"></div>
+          <div class="solution-square" style="background: {COLOR_HEX[color]}">
+            <span class="solution-num">{COLOR_TO_NUM[color]}</span>
+          </div>
         {/each}
       </div>
       <button class="result-btn lost" on:click={initGame}>Try Again</button>
@@ -337,6 +341,16 @@
     height: 48px;
     border-radius: 12px;
     box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .solution-num {
+    font-size: 18px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 
   .result-btn {

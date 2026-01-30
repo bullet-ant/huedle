@@ -2,6 +2,13 @@ export type Color = 'blue' | 'green' | 'orange' | 'yellow';
 
 export const COLORS: Color[] = ['blue', 'green', 'orange', 'yellow'];
 
+export const COLOR_TO_NUM: Record<Color, number> = {
+  blue: 1,
+  green: 2,
+  orange: 3,
+  yellow: 4,
+};
+
 export const COLOR_HEX: Record<Color, string> = {
   blue: '#3b82f6',
   green: '#22c55e',

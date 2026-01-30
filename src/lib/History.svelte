@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Color, GuessResult } from '../utils/logic';
-  import { COLOR_HEX } from '../utils/logic';
+  import { COLOR_HEX, COLOR_TO_NUM } from '../utils/logic';
   import { createEventDispatcher } from 'svelte';
 
   export let guesses: GuessResult[] = [];
@@ -22,12 +22,14 @@
   {#each Array(maxAttempts) as _, i}
     {@const result = guesses[i]}
     {@const isCurrent = i === guesses.length && isPlaying}
-    <div class="row" class:filled={result} class:current={isCurrent}>
+    <div class="row" class:filled={result} class:current={isCurrent} class:miss={result && result.matches === 0}>
       <span class="num">{i + 1}</span>
       <div class="colors">
         {#if result}
           {#each result.guess as color}
-            <div class="square" style="background: {COLOR_HEX[color]}"></div>
+            <div class="square" style="background: {COLOR_HEX[color]}">
+              <span class="slot-num">{COLOR_TO_NUM[color]}</span>
+            </div>
           {/each}
         {:else if isCurrent}
           {#each currentGuess as color, j}
@@ -37,7 +39,11 @@
               class:filled={color !== null}
               style={color ? `background: ${COLOR_HEX[color]}` : ''}
               on:click={() => handleSlotClick(j)}
-            ></button>
+            >
+              {#if color}
+                <span class="slot-num">{COLOR_TO_NUM[color]}</span>
+              {/if}
+            </button>
           {/each}
         {:else}
           {#each Array(4) as _}
@@ -47,7 +53,15 @@
       </div>
       <div class="dots">
         {#each Array(4) as _, j}
-          <div class="dot" class:on={result && j < result.matches}></div>
+          {#if result}
+            {#if j < result.matches}
+              <div class="dot on"></div>
+            {:else}
+              <span class="dot-x">✕</span>
+            {/if}
+          {:else}
+            <div class="dot"></div>
+          {/if}
         {/each}
       </div>
     </div>
@@ -85,8 +99,23 @@
 
   .row.current {
     opacity: 1;
-    background: #1a2235;
-    box-shadow: inset 0 0 0 2px #3b82f6;
+    background: #1e2a3d;
+  }
+
+  .row.miss {
+    background: #1f1a1a;
+  }
+
+  .dot-x {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ef4444;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
   }
 
   .num {
@@ -114,10 +143,20 @@
     border-radius: 10px;
     transition: all 0.15s ease;
     border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .square.empty {
     background: #252d3d;
+  }
+
+  .slot-num {
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 
   .square.input {

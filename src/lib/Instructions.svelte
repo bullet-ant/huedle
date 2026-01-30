@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Color } from '../utils/logic';
-  import { COLOR_HEX } from '../utils/logic';
+  import { COLOR_HEX, COLOR_TO_NUM } from '../utils/logic';
 
   const secret: Color[] = ['green', 'orange', 'blue', 'yellow'];
 
@@ -33,7 +33,9 @@
       <div class="answer-label">Answer</div>
       <div class="colors">
         {#each secret as color}
-          <div class="square" style="background-color: {COLOR_HEX[color]}"></div>
+          <div class="square" style="background-color: {COLOR_HEX[color]}">
+            <span class="slot-num">{COLOR_TO_NUM[color]}</span>
+          </div>
         {/each}
       </div>
     </div>
@@ -43,13 +45,19 @@
         <div class="row" class:solved={example.matches === 4}>
           <div class="colors">
             {#each example.guess as color}
-              <div class="square" style="background-color: {COLOR_HEX[color]}"></div>
+              <div class="square" style="background-color: {COLOR_HEX[color]}">
+                <span class="slot-num">{COLOR_TO_NUM[color]}</span>
+              </div>
             {/each}
           </div>
           <div class="feedback">
             <div class="dots">
               {#each Array(4) as _, j}
-                <div class="dot" class:on={j < example.matches}></div>
+                {#if j < example.matches}
+                  <div class="dot on"></div>
+                {:else}
+                  <span class="dot-x">✕</span>
+                {/if}
               {/each}
             </div>
             <span class="note">{example.note}</span>
@@ -62,7 +70,7 @@
   <ul class="rules">
     <li>Crack the secret color code</li>
     <li>No repeats - each color once</li>
-    <li>Dots = nailed it positions</li>
+    <li>● = correct position, ✕ = wrong position</li>
     <li>7 tries. Good luck!</li>
   </ul>
 
@@ -134,6 +142,16 @@
     width: 32px;
     height: 32px;
     border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slot-num {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 
   .guesses-section {
@@ -188,6 +206,18 @@
   .dot.on {
     background: #ffffff;
     box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+  }
+
+  .dot-x {
+    font-size: 12px;
+    font-weight: 700;
+    color: #ef4444;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 10px;
+    height: 10px;
   }
 
   .note {
